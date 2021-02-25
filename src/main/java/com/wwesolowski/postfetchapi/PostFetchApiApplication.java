@@ -1,5 +1,11 @@
 package com.wwesolowski.postfetchapi;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,6 +13,37 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PostFetchApiApplication {
 
 	public static void main(String[] args) {
+
+		final StandardServiceRegistry registry =
+				new StandardServiceRegistryBuilder()
+						.configure("hibernate_cfg.xml")
+						.build();
+
+		SessionFactory sessionFactory = null;
+
+		try {
+			sessionFactory = new MetadataSources(registry)
+					.buildMetadata()
+					.buildSessionFactory();
+		}
+		catch (Exception e) {
+			StandardServiceRegistryBuilder.destroy(registry);
+			System.exit(1);
+		}
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+
+		try {
+			tx.commit();
+		}
+		catch (Exception e) {
+			tx.rollback();
+		}
+		finally {
+			session.close();
+		}
+
+		sessionFactory.close();
 		SpringApplication.run(PostFetchApiApplication.class, args);
 	}
 

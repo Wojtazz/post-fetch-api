@@ -8,22 +8,15 @@ import javax.persistence.Table;
 @Table
 public class Post {
 
-    private Integer userId;
-
     @Id
     private Integer id;
+
+    private Integer userId;
 
     private String title;
 
     private String body;
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
 
     public Integer getId() {
         return id;
@@ -31,6 +24,14 @@ public class Post {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getTitle() {
