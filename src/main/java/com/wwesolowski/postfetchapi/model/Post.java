@@ -1,8 +1,10 @@
 package com.wwesolowski.postfetchapi.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table
@@ -10,6 +12,7 @@ public class Post {
 
     @Id
     private Integer id;
+    @Column(name = "user_id")
 
     private Integer userId;
 
@@ -17,7 +20,15 @@ public class Post {
 
     private String body;
 
+    public Post() {
 
+    }
+    public Post(Integer id, Integer userId, String title, String body) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.body = body;
+    }
     public Integer getId() {
         return id;
     }
