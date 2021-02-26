@@ -1,21 +1,27 @@
 package com.wwesolowski.postfetchapi.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 @Entity
 @Table
+@Valid
 public class Post {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    @Column(name = "user_id")
 
+    @Column(name = "user_id")
     private Integer userId;
 
+    @NotNull
     private String title;
 
     private String body;
@@ -23,8 +29,7 @@ public class Post {
     public Post() {
 
     }
-    public Post(Integer id, Integer userId, String title, String body) {
-        this.id = id;
+    public Post(Integer userId, String title, String body) {
         this.userId = userId;
         this.title = title;
         this.body = body;
