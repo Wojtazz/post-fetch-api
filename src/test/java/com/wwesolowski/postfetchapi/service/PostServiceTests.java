@@ -1,6 +1,9 @@
 package com.wwesolowski.postfetchapi.service;
 
+import com.wwesolowski.postfetchapi.dao.ActivityDao;
 import com.wwesolowski.postfetchapi.dao.PostDao;
+import com.wwesolowski.postfetchapi.model.Activity;
+import com.wwesolowski.postfetchapi.model.ModifyType;
 import com.wwesolowski.postfetchapi.model.Post;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,9 +15,11 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -25,6 +30,9 @@ public class PostServiceTests {
 
     @Mock
     PostDao postDao;
+
+    @Mock
+    ActivityDao activityDao;
 
     @Before
     public void setUp() {
@@ -42,8 +50,9 @@ public class PostServiceTests {
     @Test
     public void shouldSuccess_updatePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
-        post.setId(1);
-        when(postDao.findById(1)).thenReturn(java.util.Optional.of(post));
+        Activity activity = new Activity(1, ModifyType.EDIT, new Date());
+        when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
+        when(activityDao.findByPostId(anyInt())).thenReturn(java.util.Optional.of(activity));
         when(postDao.saveAndFlush(any(Post.class))).thenReturn(post);
         Post createdPost = postService.updatePost(post.getId(), "edited", "edited");
         Assert.assertEquals("edited", createdPost.getTitle());
@@ -53,8 +62,7 @@ public class PostServiceTests {
     @Test(expected = NullPointerException.class)
     public void shouldFail_updatePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
-        post.setId(1);
-        when(postDao.findById(1)).thenReturn(java.util.Optional.of(post));
+        when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
         when(postDao.saveAndFlush(any(Post.class))).thenReturn(post);
         Post createdPost = postService.updatePost(2, "edited", "edited");
         Assert.assertEquals("edited", createdPost.getTitle());
@@ -64,8 +72,9 @@ public class PostServiceTests {
     @Test
     public void shouldSuccess_deletePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
-        post.setId(1);
-        when(postDao.findById(1)).thenReturn(java.util.Optional.of(post));
+        Activity activity = new Activity(1, ModifyType.EDIT, new Date());
+        when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
+        when(activityDao.findByPostId(anyInt())).thenReturn(java.util.Optional.of(activity));
         postService.deletePost(post.getId());
         verify(postDao, times(1)).delete(post);
     }
@@ -73,8 +82,7 @@ public class PostServiceTests {
     @Test(expected = NullPointerException.class)
     public void shouldFail_deletePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
-        post.setId(1);
-        when(postDao.findById(1)).thenReturn(java.util.Optional.of(post));
+        when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
         postService.deletePost(2);
         verify(postDao, times(1)).delete(post);
     }
