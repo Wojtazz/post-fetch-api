@@ -13,6 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Date;
@@ -40,13 +44,24 @@ public class PostServiceTests {
     }
 
     @Test
+    public void shouldSuccess_returnSynchronizedPostsTest() {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<Post>> postsResponse =
+                restTemplate.exchange("https://jsonplaceholder.typicode.com/posts",
+                        HttpMethod.GET, null, new ParameterizedTypeReference<List<Post>>() {
+                        });
+        Activity activity = new Activity(1, ModifyType.EDIT, new Date());
+        when(activityDao.findAll()).thenReturn(Collections.singletonList(activity));
+        List<Post> posts = postService.synchronizeAllPosts();
+        Assert.assertEquals(postsResponse.getBody().size() - 1, posts.size());
+    }
+    @Test
     public void shouldSuccess_createPostAndReturnPostsTest() {
         Post post = new Post(1, "test", "test");
-        when(postDao.findAll()).thenReturn(Collections.singletonList(post));
+        when(postDao.findAllByOrderByIdAsc()).thenReturn(Collections.singletonList(post));
         List<Post> posts = postService.getAllPosts(null);
         Assert.assertEquals(1, posts.size());
     }
-
     @Test
     public void shouldSuccess_updatePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");

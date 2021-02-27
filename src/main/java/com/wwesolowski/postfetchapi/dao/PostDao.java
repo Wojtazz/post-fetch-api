@@ -10,4 +10,5 @@ import java.util.List;
 public interface PostDao extends JpaRepository<Post, Integer> {
 
     List<Post> findByTitleContainingIgnoreCase(String title);
+    List<Post> findAllByOrderByIdAsc();
 }

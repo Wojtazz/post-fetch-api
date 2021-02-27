@@ -8,10 +8,16 @@ import com.wwesolowski.postfetchapi.model.Activity;
 import com.wwesolowski.postfetchapi.model.ModifyType;
 import com.wwesolowski.postfetchapi.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -22,11 +28,30 @@ public class PostService {
     @Autowired
     private ActivityDao activityDao;
 
+    public List<Post> synchronizeAllPosts() {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<Post>> postsResponse =
+                restTemplate.exchange("https://jsonplaceholder.typicode.com/posts",
+                        HttpMethod.GET, null, new ParameterizedTypeReference<List<Post>>() {
+                        });
+        List<Integer> postsActivitesIds = activityDao.findAll()
+                .stream()
+                .map(activity -> activity.getPostId())
+                .collect(Collectors.toList());
+        List<Post> synchronizedPosts = postsResponse
+                .getBody()
+                .stream()
+                .filter(post -> !postsActivitesIds.contains(post.getId()))
+                .collect(Collectors.toList());
+        postDao.saveAll(synchronizedPosts);
+        return synchronizedPosts;
+    }
+
     public List<Post> getAllPosts(String title) {
         if (title != null) {
             return postDao.findByTitleContainingIgnoreCase(title);
         }
-        return postDao.findAll();
+        return postDao.findAllByOrderByIdAsc();
     }
 
     public Post updatePost(Integer id, String title, String body) throws Exception {
