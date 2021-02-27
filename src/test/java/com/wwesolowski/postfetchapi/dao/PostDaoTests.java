@@ -60,7 +60,7 @@ public class PostDaoTests {
         Post post = postDao.findById(1).orElse(null);
         post.setTitle("edited");
         postDao.saveAndFlush(post);
-        Assert.assertNotEquals(post.getTitle(), postDao.findById(1).orElse(null));
+        Assert.assertNotEquals("test1", postDao.findById(1).orElse(null).getTitle());
     }
 
     @Test
@@ -70,8 +70,7 @@ public class PostDaoTests {
 
     @Test
     public void shouldSuccess_testDeletePost() {
-        Post post = postDao.findById(1).orElse(null);
-        postDao.delete(post);
+        postDao.delete(postDao.findById(1).orElse(null));
         Assert.assertNull(postDao.findById(1).orElse(null));
     }
 

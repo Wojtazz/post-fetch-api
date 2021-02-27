@@ -14,12 +14,21 @@ public class Activity {
 
     @NotNull
     private Integer postId;
-    
+
     @NotNull
     private ModifyType modifyType;
 
     @NotNull
     private Date modifyDate;
+
+    public Activity() {
+
+    }
+    public Activity(Integer postId, ModifyType modifyType, Date modifyDate) {
+        this.postId = postId;
+        this.modifyType = modifyType;
+        this.modifyDate = modifyDate;
+    }
 
     public Integer getPostId() {
         return postId;
