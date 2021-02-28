@@ -62,9 +62,10 @@ public class ActivityDaoTests {
         activityDao.saveAndFlush(activity);
         Assert.assertNotEquals(ModifyType.EDIT, activityDao.findById(1).orElse(null).getModifyType());
     }
+
     @Test
     public void shouldFail_testEditActivity() {
-        Assert.assertThrows(NullPointerException.class,() -> activityDao.findById(4).orElse(null).setModifyType(ModifyType.DELETE));
+        Assert.assertThrows(NullPointerException.class, () -> activityDao.findById(4).orElse(null).setModifyType(ModifyType.DELETE));
     }
 
     @Test

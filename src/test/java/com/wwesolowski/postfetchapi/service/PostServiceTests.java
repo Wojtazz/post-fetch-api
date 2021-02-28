@@ -56,6 +56,7 @@ public class PostServiceTests {
         List<Post> posts = postService.synchronizeAllPosts();
         Assert.assertEquals(postsResponse.getBody().size() - 1, posts.size());
     }
+
     @Test
     public void shouldSuccess_createPostAndReturnPostsTest() {
         Post post = new Post(1, "test", "test");
@@ -63,6 +64,7 @@ public class PostServiceTests {
         List<Post> posts = postService.getAllPosts(null);
         Assert.assertEquals(1, posts.size());
     }
+
     @Test
     public void shouldSuccess_updatePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");

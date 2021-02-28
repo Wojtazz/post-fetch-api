@@ -65,7 +65,7 @@ public class PostDaoTests {
 
     @Test
     public void shouldFail_testEditPost() {
-        Assert.assertThrows(NullPointerException.class,() -> postDao.findById(4).orElse(null).setTitle("test4"));
+        Assert.assertThrows(NullPointerException.class, () -> postDao.findById(4).orElse(null).setTitle("test4"));
     }
 
     @Test

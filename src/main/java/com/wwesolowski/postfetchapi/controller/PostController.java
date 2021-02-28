@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public class PostController {
 
     @Autowired
-    private PostService postService;
+    PostService postService;
 
     @Autowired
-    private ModelMapper modelMapper;
+    ModelMapper modelMapper;
 
     @GetMapping
     public ResponseEntity getAllPosts(@RequestBody(required = false) GetAllPostsDto getAllPostsDto) {

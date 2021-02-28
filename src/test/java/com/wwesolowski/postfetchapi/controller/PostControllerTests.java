@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,18 +34,9 @@ public class PostControllerTests {
     @MockBean
     PostService postService;
 
-    ObjectMapper mapper = new ObjectMapper();
-
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
-    @Test
-    public void shouldSuccess_returnPosts() throws Exception {
-        Post post = new Post(1, "test", "test");
-        post.setId(1);
-        when(postService.getAllPosts(null)).thenReturn(Collections.singletonList(post));
-        mockMvc.perform(get("/posts")).andDo(print()).andExpect(status().isOk());
-    }
     @Test
     public void shouldSuccess_returnSynchronizedPosts() throws Exception {
         Post post = new Post(1, "test", "test");
@@ -56,19 +48,29 @@ public class PostControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
+
+    @Test
+    public void shouldSuccess_returnPosts() throws Exception {
+        Post post = new Post(1, "test", "test");
+        post.setId(1);
+        when(postService.getAllPosts(null)).thenReturn(Collections.singletonList(post));
+        mockMvc.perform(get("/posts")).andDo(print()).andExpect(status().isOk());
+    }
+
     @Test
     public void shouldSuccess_updatePost() throws Exception {
         Post post = new Post(1, "test", "test");
         post.setId(1);
-        when(postService.updatePost(anyInt(),any(),any())).thenReturn(post);
+        when(postService.updatePost(anyInt(), any(), any())).thenReturn(post);
         mockMvc
                 .perform(put("/posts/1").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"test\",\"body\":\"test\"}"))
+                        .content("{\"title\":\"test\",\"body\":\"test\"}"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("test"))
                 .andExpect(jsonPath("$.body").value("test"));
     }
+
     @Test
     public void shouldSuccess_deletePost() throws Exception {
         Post post = new Post(1, "test", "test");

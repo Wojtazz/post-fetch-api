@@ -24,11 +24,13 @@ public class Post {
     public Post() {
 
     }
+
     public Post(Integer userId, String title, String body) {
         this.userId = userId;
         this.title = title;
         this.body = body;
     }
+
     public Integer getId() {
         return id;
     }

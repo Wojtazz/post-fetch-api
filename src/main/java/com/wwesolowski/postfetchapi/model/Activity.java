@@ -25,6 +25,7 @@ public class Activity {
     public Activity() {
 
     }
+
     public Activity(Integer postId, ModifyType modifyType, Date modifyDate) {
         this.postId = postId;
         this.modifyType = modifyType;

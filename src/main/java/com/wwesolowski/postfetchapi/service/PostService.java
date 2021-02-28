@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 public class PostService {
 
     @Autowired
-    private PostDao postDao;
+    PostDao postDao;
 
     @Autowired
-    private ActivityDao activityDao;
+    ActivityDao activityDao;
 
     public List<Post> synchronizeAllPosts() {
         RestTemplate restTemplate = new RestTemplate();
@@ -56,7 +56,7 @@ public class PostService {
     public Post updatePost(Integer id, String title, String body) throws Exception {
         Post post = postDao.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post with specific id doesn't exists"));
-        if(title == null && body == null) {
+        if (title == null && body == null) {
             throw new BodyInvalidException("RequestBody cannot be empty and need to have title or/and body value");
         }
         Activity activity = activityDao.findByPostId(post.getId()).orElse(new Activity());
@@ -64,10 +64,10 @@ public class PostService {
         activity.setModifyType(ModifyType.EDIT);
         activity.setModifyDate(new Date());
         activityDao.save(activity);
-        if(title != null) {
+        if (title != null) {
             post.setTitle(title);
         }
-        if(body != null) {
+        if (body != null) {
             post.setBody(body);
         }
         return postDao.saveAndFlush(post);
