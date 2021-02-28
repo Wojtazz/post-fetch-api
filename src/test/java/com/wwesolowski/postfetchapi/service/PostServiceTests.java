@@ -2,17 +2,18 @@ package com.wwesolowski.postfetchapi.service;
 
 import com.wwesolowski.postfetchapi.dao.ActivityDao;
 import com.wwesolowski.postfetchapi.dao.PostDao;
+import com.wwesolowski.postfetchapi.exception.NotFoundException;
 import com.wwesolowski.postfetchapi.model.Activity;
 import com.wwesolowski.postfetchapi.model.ModifyType;
 import com.wwesolowski.postfetchapi.model.Post;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class PostServiceTests {
 
     @InjectMocks
@@ -65,6 +66,7 @@ public class PostServiceTests {
     @Test
     public void shouldSuccess_updatePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
+        post.setId(1);
         Activity activity = new Activity(1, ModifyType.EDIT, new Date());
         when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
         when(activityDao.findByPostId(anyInt())).thenReturn(java.util.Optional.of(activity));
@@ -74,19 +76,16 @@ public class PostServiceTests {
         Assert.assertEquals("edited", createdPost.getBody());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NotFoundException.class)
     public void shouldFail_updatePostAndReturnPostTest() throws Exception {
-        Post post = new Post(1, "test", "test");
-        when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
-        when(postDao.saveAndFlush(any(Post.class))).thenReturn(post);
-        Post createdPost = postService.updatePost(2, "edited", "edited");
-        Assert.assertEquals("edited", createdPost.getTitle());
-        Assert.assertEquals("edited", createdPost.getBody());
+        when(postDao.findById(1)).thenReturn(java.util.Optional.of(new Post()));
+        postService.updatePost(2, "edited", "edited");
     }
 
     @Test
     public void shouldSuccess_deletePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
+        post.setId(1);
         Activity activity = new Activity(1, ModifyType.EDIT, new Date());
         when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
         when(activityDao.findByPostId(anyInt())).thenReturn(java.util.Optional.of(activity));
@@ -94,10 +93,13 @@ public class PostServiceTests {
         verify(postDao, times(1)).delete(post);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NotFoundException.class)
     public void shouldFail_deletePostAndReturnPostTest() throws Exception {
         Post post = new Post(1, "test", "test");
-        when(postDao.findById(anyInt())).thenReturn(java.util.Optional.of(post));
+        post.setId(1);
+        Activity activity = new Activity(1, ModifyType.EDIT, new Date());
+        when(postDao.findById(1)).thenReturn(java.util.Optional.of(post));
+        when(activityDao.findByPostId(1)).thenReturn(java.util.Optional.of(activity));
         postService.deletePost(2);
         verify(postDao, times(1)).delete(post);
     }

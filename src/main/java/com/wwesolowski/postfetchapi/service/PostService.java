@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -55,7 +56,8 @@ public class PostService {
     }
 
     public Post updatePost(Integer id, String title, String body) throws Exception {
-        Post post = postDao.findById(id).orElseThrow(() -> new NotFoundException("Post with specific id doesn't exists"));
+        Post post = postDao.findById(id)
+                .orElseThrow(() -> new NotFoundException("Post with specific id doesn't exists"));
         if(title == null && body == null) {
             throw new BodyInvalidException("RequestBody cannot be empty and need to have title or/and body value");
         }
