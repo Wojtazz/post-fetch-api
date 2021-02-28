@@ -52,7 +52,11 @@ public class PostController {
     @GetMapping("/synchronize")
     public ResponseEntity synchronizePosts() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(postService.synchronizeAllPosts());
+            List<PostDto> synchronizedPosts = postService.synchronizeAllPosts()
+                    .stream()
+                    .map(post -> modelMapper.map(post, PostDto.class))
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.OK).body(synchronizedPosts);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
