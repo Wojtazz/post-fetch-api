@@ -1,12 +1,10 @@
 package com.wwesolowski.postfetchapi.model;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table
-@Valid
+@Table(name = "posts")
 public class Post {
 
     @Id
